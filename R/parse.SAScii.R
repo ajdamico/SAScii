@@ -1,5 +1,5 @@
 parse.SAScii <- 
-function( sas_ri , beginline = 1 ){
+function( sas_ri , beginline = 1 , lrecl = NULL ){
 
 	##and now actually pull the entire file into R from the FTP site, line-by-line
 	SASinput <- readLines( sas_ri )
@@ -43,7 +43,7 @@ function( sas_ri , beginline = 1 ){
 	for ( i in 1:length( FWFlines ) ) FWFlines[ i ] <- gsub( "-" , " - " , FWFlines[ i ] , fixed = T )
 
 	#remove all fully-blank lines
-	FWFlines <- FWFlines[ which( str_trim(FWFlines) != "" ) ]
+	FWFlines <- FWFlines[ which( gsub( " " , "" , FWFlines ) != "" ) ]
 
 	#break apart all FWF lines
 	z<-strsplit(FWFlines," ",perl=T)
@@ -54,7 +54,7 @@ function( sas_ri , beginline = 1 ){
 	for ( i in 1:length( z ) ){
 		#throw out all splits that are empty
 		z[[i]] <- gsub( "-" , " " , z[[i]] )
-		z[[i]] <- z[[i]][ which( str_trim( z[[i]] ) != "" ) ]
+		z[[i]] <- z[[i]][ which( gsub( " " , "" , z[[i]] ) != "" ) ]
 		
 		#and then combine everything into one huge character vector
 		SAS.input.lines <- c( SAS.input.lines , z[[i]] )
@@ -238,14 +238,65 @@ function( sas_ri , beginline = 1 ){
 				i <- i + 1
 			} else x[ j , "divisor" ] <- 1
 			
+			#BUT if we're on the second row already..
+			if ( j > 1 ) {
+			
+				#IF current row's start > previous row's end + 1
+				if ( as.numeric( x[ j , 'start' ] ) > as.numeric( x[ j - 1 , 'end' ] ) + 1 ){
+					#then you need to add in some blank space!
+					x <-
+						rbind( 
+							x[ 1:(j-1) , ] ,
+							NA ,
+							x[ j , ]
+						)
+					
+					#add one to j, since you've added a row
+					j <- j + 1
+					
+					#and add a negative
+					x[ j - 1 , 'start' ] <- as.numeric( x[ j - 2 , 'end' ] ) + 1
+					x[ j - 1 , 'end' ] <- as.numeric( x[ j , 'start' ] ) - 1
+				}
+			}
+			
 			#jump to the next row of x
 			j <- j + 1
 		}
-		x <- transform( x , width = as.numeric(end) - as.numeric(start) + 1 )
+		x <- 
+			transform( 
+				x , 
+				width = 
+					ifelse( 
+						is.na( varname ) , 
+						-( as.numeric(end) - as.numeric(start) + 1 ) ,
+						as.numeric(end) - as.numeric(start) + 1 
+					)
+			)
 	}
 
 	#limit to only four columns
 	x <- x[ , c("varname","width","char","divisor") ]
+
+	#finally, if the final logical record length is specified by the user..
+	if ( !is.null( lrecl ) ){
+		
+		#if it's the same as the sum of the widths already in x, do nothing (specifying it was unnecessary)
+		
+		#if it's less than the sum of the absolute values of current widths..
+		if ( lrecl < sum( abs( x$width ) ) ) stop ( "specified logical record length (lrecl) parameter is shorter than the SAS columns constructed" )
+		
+		#if it's more than the sum of the absolute value of the current widths..
+		if ( lrecl > sum( abs( x$width ) ) ){
+		
+			#blank space containing the difference should be added onto the tail of x
+			length.of.blank.record.to.add.to.end <- ( lrecl - sum( abs( x$width ) ) )
+		
+			x[ nrow( x ) + 1 , 'width' ] <- -length.of.blank.record.to.add.to.end
+		}
+		
+
+	}
 	
 	x
 }
