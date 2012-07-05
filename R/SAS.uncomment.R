@@ -11,12 +11,12 @@ function( SASinput , starting.comment , ending.comment ){
 		asterisk_slash <- unlist( gregexpr( ending.comment , SASinput[ i ] , fixed = T ) )
 		
 		#only if the line contains an slash_asterisk..
-		if ( slash_asterisk > 0 ){
+		if ( !( -1 %in% slash_asterisk ) ){
 			
 			#if there's a closing asterisk_slash on that line..
-			if ( asterisk_slash > slash_asterisk ){
+			if ( max( asterisk_slash ) > min( slash_asterisk ) ){
 				
-				SASinput[ i ] <- sub( substr( SASinput[ i ] , slash_asterisk , asterisk_slash + 1 ) , "" , SASinput[ i ] , fixed = T )
+				SASinput[ i ] <- sub( substr( SASinput[ i ] , slash_asterisk[1] , asterisk_slash[1] + 1 ) , "" , SASinput[ i ] , fixed = T )
 				
 				#and re-do the line just in case there's more than one comment!!
 				i <- i - 1
@@ -24,22 +24,22 @@ function( SASinput , starting.comment , ending.comment ){
 			} else {
 			
 				#delete the rest of the line
-				SASinput[ i ] <- sub( substr( SASinput[ i ] , slash_asterisk , nchar( SASinput[ i ] ) ) , "" , SASinput[ i ] , fixed = T )
+				SASinput[ i ] <- sub( substr( SASinput[ i ] , slash_asterisk[1] , nchar( SASinput[ i ] ) ) , "" , SASinput[ i ] , fixed = T )
 				
 				#start a new counter
 				j <- i
 				
 				#keep going until you find a asterisk_slash
-				while( asterisk_slash < 0 ){
+				while( max( asterisk_slash ) < 0 ){
 					j <- j + 1
 					
 					#look for asterisk_slash again
 					asterisk_slash <- unlist( gregexpr( ending.comment , SASinput[ j ] , fixed = T ) )
 					
 					#if the asterisk_slash doesn't exist, delete the whole line
-					if ( asterisk_slash < 0 ) SASinput[ j ] <- ""
+					if ( max( asterisk_slash ) < 0 ) SASinput[ j ] <- ""
 					#otherwise delete until the asterisk_slash
-					else SASinput[ j ] <- sub( substr( SASinput[ j ] , 1 , asterisk_slash + 1 ) , "" , SASinput[ j ] , fixed = T )
+					else SASinput[ j ] <- sub( substr( SASinput[ j ] , 1 , asterisk_slash[1] + 1 ) , "" , SASinput[ j ] , fixed = T )
 				}
 			}
 		}

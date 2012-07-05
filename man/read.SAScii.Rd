@@ -7,7 +7,7 @@ Create an R data frame by reading in an ASCII file and SAS import instructions
 Using importation code designed for SAS users to read ASCII files into sas7bdat files, the read.SAScii function parses through the INPUT block of a (.sas) syntax file to design the parameters needed for a read.fwf function call, and then runs that command.  This allows the user to specify the location of the ASCII (often a .dat) file and the location of the .sas syntax file, and then load the data frame directly into R in just one step.
 }
 \usage{
-read.SAScii( fn, sas_ri, beginline = 1, buffersize = 50, zipped = F , n = -1 )
+read.SAScii( fn, sas_ri, beginline = 1, buffersize = 50, zipped = F , n = -1 , intervals.to.print = 1000 )
 }
 \arguments{
   \item{fn}{
@@ -28,6 +28,9 @@ read.SAScii( fn, sas_ri, beginline = 1, buffersize = 50, zipped = F , n = -1 )
   \item{n}{
    the maximum number of records (lines) to be passed to read.fwf(), defaulting to no limit.
 }
+  \item{intervals.to.print}{
+   the number of records to wait before printing current progress to the screen.
+}
 }
 \details{
 This function cannot handle overlapping columns.  For example, in the 2009 National Ambulatory Medical Care Survey (NAMCS) SAS import instructions, columns DIAG1 and DIAG13D will create an error because both start at space 55.
@@ -35,7 +38,7 @@ This function cannot handle overlapping columns.  For example, in the 2009 Natio
 ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/dataset_documentation/namcs/sas/nam09inp.txt.
 }
 \value{
-A data.frame as produced by read.fwf() which is called internally. 
+A data.frame as produced by read.fwf() which is called internally.
 }
 \author{
 Anthony Joseph Damico
@@ -134,49 +137,49 @@ save( MEPS.09.ER.visit.df , file = "MEPS.09.ER.visit.data.rda" )
 
 
 #########################################################################################
-#Load the 2010 National Health Interview Survey Persons file as an R data frame
+#Load the 2011 National Health Interview Survey Persons file as an R data frame
 
-NHIS.10.personsx.SAS.read.in.instructions <- 
-	"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Program_Code/NHIS/2010/PERSONSX.sas"
-NHIS.10.personsx.file.location <- 
-	"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NHIS/2010/personsx.zip"
+NHIS.11.personsx.SAS.read.in.instructions <- 
+	"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Program_Code/NHIS/2011/personsx.sas"
+NHIS.11.personsx.file.location <- 
+	"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NHIS/2011/personsx.zip"
 
 #store the NHIS file as an R data frame!
-NHIS.10.personsx.df <- 
+NHIS.11.personsx.df <- 
 	read.SAScii ( 
-		NHIS.10.personsx.file.location , 
-		NHIS.10.personsx.SAS.read.in.instructions , 
+		NHIS.11.personsx.file.location , 
+		NHIS.11.personsx.SAS.read.in.instructions , 
 		zipped = T )
 
 #or store the NHIS SAS import instructions for use in a 
 #read.fwf function call outside of the read.SAScii function
-NHIS.10.personsx.sas <- parse.SAScii( NHIS.10.personsx.SAS.read.in.instructions )
+NHIS.11.personsx.sas <- parse.SAScii( NHIS.11.personsx.SAS.read.in.instructions )
 
 #save the data frame now for instantaneous loading later
-save( NHIS.10.personsx.df , file = "NHIS.10.personsx.data.rda" )
+save( NHIS.11.personsx.df , file = "NHIS.11.personsx.data.rda" )
 
 
 #########################################################################################
-#Load the 2010 National Health Interview Survey Sample Adult file as an R data frame
+#Load the 2011 National Health Interview Survey Sample Adult file as an R data frame
 
-NHIS.10.samadult.SAS.read.in.instructions <- 
-	"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Program_Code/NHIS/2010/SAMADULT.sas"
-NHIS.10.samadult.file.location <- 
-	"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NHIS/2010/samadult.zip"
+NHIS.11.samadult.SAS.read.in.instructions <- 
+	"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Program_Code/NHIS/2011/SAMADULT.sas"
+NHIS.11.samadult.file.location <- 
+	"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NHIS/2011/samadult.zip"
 
 #store the NHIS file as an R data frame!
-NHIS.10.samadult.df <- 
+NHIS.11.samadult.df <- 
 	read.SAScii ( 
-		NHIS.10.samadult.file.location , 
-		NHIS.10.samadult.SAS.read.in.instructions , 
+		NHIS.11.samadult.file.location , 
+		NHIS.11.samadult.SAS.read.in.instructions , 
 		zipped = T )
 
 #or store the NHIS SAS import instructions for use in a 
 #read.fwf function call outside of the read.SAScii function
-NHIS.10.samadult.sas <- parse.SAScii( NHIS.10.samadult.SAS.read.in.instructions )
+NHIS.11.samadult.sas <- parse.SAScii( NHIS.11.samadult.SAS.read.in.instructions )
 
 #save the data frame now for instantaneous loading later
-save( NHIS.10.samadult.df , file = "NHIS.10.samadult.data.rda" )
+save( NHIS.11.samadult.df , file = "NHIS.11.samadult.data.rda" )
 
 
 #########################################################################################
@@ -285,9 +288,9 @@ cps.repwgt.sas <- parse.SAScii( CPS.replicate.weight.SAS.read.in.instructions )
 #########################################################################################
 #Load the 2008 Survey of Income and Program Participation Wave 1 as an R data frame
 SIPP.08w1.SAS.read.in.instructions <- 
-	"ftp://www.sipp.census.gov/pub/sipp/2008/l08puw1.sas"
+	"http://smpbff2.dsd.census.gov/pub/sipp/2008/l08puw1.sas"
 SIPP.08w1.file.location <- 
-	"ftp://www.sipp.census.gov/pub/sipp/2008/l08puw1.zip"
+	"http://smpbff2.dsd.census.gov/pub/sipp/2008/l08puw1.zip"
 
 #store the SIPP file as an R data frame
 
@@ -312,9 +315,9 @@ SIPP.08w1.sas <- parse.SAScii( SIPP.08w1.SAS.read.in.instructions , beginline = 
 #Load the Replicate Weights file of the 
 #2008 Survey of Income and Program Participation Wave 1 as an R data frame
 SIPP.repwgt.08w1.SAS.read.in.instructions <- 
-	"ftp://www.sipp.census.gov/pub/sipp/2008/rw08wx.sas"
+	"http://smpbff2.dsd.census.gov/pub/sipp/2008/rw08wx.sas"
 SIPP.repwgt.08w1.file.location <- 
-	"ftp://www.sipp.census.gov/pub/sipp/2008/rw08w1.zip"
+	"http://smpbff2.dsd.census.gov/pub/sipp/2008/rw08w1.zip"
 
 #store the SIPP file as an R data frame
 
@@ -341,7 +344,7 @@ SIPP.repwgt.08w1.sas <-
 #Load all twelve waves of the 2004 Survey of Income and Program Participation as R data frames
 	
 SIPP.04w1.SAS.read.in.instructions <- 
-	"ftp://www.sipp.census.gov/pub/sipp/2004/l04puw1.sas"
+	"http://smpbff2.dsd.census.gov/pub/sipp/2004/l04puw1.sas"
 
 #store the SIPP SAS import instructions for use in a 
 #read.fwf function call outside of the read.SAScii function
@@ -355,7 +358,7 @@ SIPP.04w1.sas <- parse.SAScii( SIPP.04w1.SAS.read.in.instructions , beginline = 
 for ( i in 1:12 ){
 	
 	SIPP.04wX.file.location <- 
-		paste( "ftp://www.sipp.census.gov/pub/sipp/2004/l04puw" , i , ".zip" , sep = "" )
+		paste( "http://smpbff2.dsd.census.gov/pub/sipp/2004/l04puw" , i , ".zip" , sep = "" )
 
 	#name the data frame based on the current wave
 	df.name <- paste( "SIPP.04w" , i , ".df" , sep = "" )
