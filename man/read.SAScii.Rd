@@ -7,7 +7,7 @@ Create an R data frame by reading in an ASCII file and SAS import instructions
 Using importation code designed for SAS users to read ASCII files into sas7bdat files, the read.SAScii function parses through the INPUT block of a (.sas) syntax file to design the parameters needed for a read.fwf function call, and then runs that command.  This allows the user to specify the location of the ASCII (often a .dat) file and the location of the .sas syntax file, and then load the data frame directly into R in just one step.
 }
 \usage{
-read.SAScii( fn, sas_ri, beginline = 1, buffersize = 50, zipped = F , n = -1 , intervals.to.print = 1000 )
+read.SAScii( fn, sas_ri, beginline = 1, buffersize = 50, zipped = F , n = -1 , intervals.to.print = 1000 , lrecl = NULL )
 }
 \arguments{
   \item{fn}{
@@ -30,6 +30,9 @@ read.SAScii( fn, sas_ri, beginline = 1, buffersize = 50, zipped = F , n = -1 , i
 }
   \item{intervals.to.print}{
    the number of records to wait before printing current progress to the screen.
+}
+  \item{lrecl}{
+   LRECL option from SAS code.  Only necessary if the width of the ASCII file is longer than the actual columns containing data (if the file contains empty space on the right side)
 }
 }
 \details{

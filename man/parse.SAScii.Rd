@@ -8,7 +8,7 @@ Convert SAS import instructions into the arguments for a read.fwf function call.
 Re-configure the INPUT block of a (.sas) syntax file into the arguments necessary to run the read.fwf function on an ASCII data set.
 }
 \usage{
-parse.SAScii( sas_ri, beginline = 1 )
+parse.SAScii( sas_ri, beginline = 1 , lrecl = NULL )
 }
 \arguments{
   \item{sas_ri}{
