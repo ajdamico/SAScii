@@ -3,8 +3,7 @@ Type: Package
 Title: Import ASCII files directly into R using only a SAS input script
 Version: 0.3
 Date: 2012-07-06
-Author: Anthony Joseph Damico
-Maintainer: Anthony Joseph Damico <ajdamico@gmail.com>
+Authors@R: person( "Anthony Joseph" , "Damico" , role = c( "aut" , "cre" ) , email = "ajdamico@gmail.com" )
 Description: Using any importation code designed for SAS users to read ASCII files into sas7bdat files, the SAScii package parses through the INPUT block of a (.sas) syntax file to design the parameters needed for a read.fwf function call.  This allows the user to specify the location of the ASCII (often a .dat) file and the location of the .sas syntax file, and then load the data frame directly into R in just one step.
 License: GPL (>= 2)
 URL: https://github.com/ajdamico/SAScii
