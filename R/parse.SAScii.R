@@ -263,16 +263,17 @@ function( sas_ri , beginline = 1 , lrecl = NULL ){
 			#jump to the next row of x
 			j <- j + 1
 		}
+		
+		#the width should be the end position minus the beginning position, plus one
 		x <- 
-			transform( 
-				x , 
-				width = 
-					ifelse( 
-						is.na( varname ) , 
-						-( as.numeric(end) - as.numeric(start) + 1 ) ,
-						as.numeric(end) - as.numeric(start) + 1 
-					)
+			transform(
+				x ,
+				width = as.numeric(end) - as.numeric(start) + 1 
 			)
+		
+		#if there's no variable name, it should be a negative.
+		x[ is.na( x[ , 'varname' ] ) , 'width' ] <- ( -1 * x[ is.na( x[ , 'varname' ] ) , 'width' ] )
+		
 	}
 
 	#limit to only four columns

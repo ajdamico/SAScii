@@ -2,12 +2,10 @@ read.SAScii <-
 function( fn , sas_ri , beginline = 1 , buffersize = 50 , zipped = F , n = -1 , intervals.to.print = 1000 , lrecl = NULL){
 #read.SAScii uses a smaller buffersize than the usual FWF default, to handle larger datasets
 
-
-
 	x <- parse.SAScii( sas_ri , beginline , lrecl )
 	
 	#only the width field should include negatives
-	y <- subset( x , !is.na( varname ) )
+	y <- x[ !is.na( x[ , 'varname' ] ) , ]
 	
 	
 	#if the ASCII file is stored in an archive, unpack it to a temporary file and run that through read.fwf instead.
