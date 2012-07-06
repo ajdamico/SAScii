@@ -12,8 +12,8 @@ Using importation code designed for SAS users to read ASCII files into sas7bdat 
 \tabular{ll}{
 Package: \tab SAScii\cr
 Type: \tab Package\cr
-Version: \tab 0.2\cr
-Date: \tab 2012-03-21\cr
+Version: \tab 0.3\cr
+Date: \tab 2012-07-06\cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab Yes\cr
 }
