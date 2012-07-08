@@ -1,3 +1,16 @@
+#code from
+#http://r.789695.n4.nabble.com/Capturing-warnings-with-capture-output-td912468.html
+#thanks to Gabor Grothendieck
+
+withWarnings <- function(expr) {
+     wHandler <- function(w) {
+      cat(w$message, "\n")
+      invokeRestart("muffleWarning")
+     }
+     withCallingHandlers(expr, warning = wHandler)
+} 
+
+
 read.SAScii <- 
 function( fn , sas_ri , beginline = 1 , buffersize = 50 , zipped = F , n = -1 , intervals.to.print = 1000 , lrecl = NULL){
 #read.SAScii uses a smaller buffersize than the usual FWF default, to handle larger datasets
@@ -44,12 +57,15 @@ function( fn , sas_ri , beginline = 1 , buffersize = 50 , zipped = F , n = -1 , 
 		}
 		
 		#input actual SAS data text-delimited file to read in
+		
+		# read all columns in as character fields
+		# (some will be converted to numeric later)
 		SASfile.partial <- read.fwf( 
 								fn , 
 								x$width , 
 								col.names=y$varname , 
 								comment.char = '' , 
-								colClasses = ifelse( y$char , 'character' , 'numeric' ) , 
+								colClasses = 'character' , 
 								buffersize = buffersize , 
 								n = lines.to.read ,
 								skip = ( curStart )
@@ -62,16 +78,66 @@ function( fn , sas_ri , beginline = 1 , buffersize = 50 , zipped = F , n = -1 , 
 		cat( "  current progress: read.fwf has read in" , prettyNum( nrow( SASfile ) , big.mark = "," ) , "records" , "\r" )
 
 	}
-							
-	#divide by the divisor whenever necessary
+	
+	# loop through all columns to:
+		# convert to numeric where necessary
+		# divide by the divisor whenever necessary
 	for ( l in 1:nrow(y) ){
+	
+		# if the SAS input script says the current column should be numeric
+		# convert it!
+		if ( !y[ l , 'char' ] ){
+		
+			#handle NAs introduced by coercion warnings by..
+			#capturing them
+			op <-
+				capture.output( 
+					withWarnings(
+						SASfile[ , l ] <- as.numeric( SASfile[ , l ] ) 
+					)
+				)
+		
+			#and then printing this NOTE to the console
+			if( identical( op , "NAs introduced by coercion " ) ){
+			
+				problem.line <-
+					readLines( sas_ri )[ grep( y[ l , 'varname' ] , readLines( sas_ri ) ) ]
+				
+				potential.fix <-
+					gsub( 
+						y[ l , 'varname' ] , 
+						paste( 
+							y[ l , 'varname' ] ,
+							"$" 
+						) ,
+						problem.line
+					)
+				
+				writeLines( 
+					paste( 
+						"NOTE: column" , 
+						y[ l , 'varname' ] , 
+						"either contains missings or character strings.\n" ,
+						"if this column is numeric and contains only numbers and missings, no action is required.\n" ,
+						"if this column actually contains character strings, then\n" ,
+						"consider modifying the SAS input syntax file stored at\n" ,
+						sas_ri , "\n" ,
+						"to include a dollar sign ($) in the text below.\n\n" , 
+						"here's a guess: try changing\n" ,
+						problem.line ,
+						"\n  to\n" ,
+						potential.fix ,
+						"\n\n"
+					)
+				)
+			}
+		}
 	
 		#are there any periods in the column already?
 		no_decimal_points <- ( sum( grepl( "." , SASfile[ , l ] , fixed = T ) ) == 0 )
 		
 		if ( (y[ l , "divisor" ] != 1) & !(y[ l , "char" ]) & no_decimal_points ) SASfile[ , l ] <- SASfile[ , l ] * as.numeric( y[ l , "divisor" ] )
 		
-		#if ( y[ l , "char" ] ) SASfile[ , l ] <- str_trim( SASfile[ , l ] )
 	}
 
 	SASfile
