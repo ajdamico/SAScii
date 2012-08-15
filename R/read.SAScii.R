@@ -134,9 +134,12 @@ function( fn , sas_ri , beginline = 1 , buffersize = 50 , zipped = F , n = -1 , 
 		}
 	
 		#are there any periods in the column already?
-		no_decimal_points <- ( sum( grepl( "." , SASfile[ , l ] , fixed = T ) ) == 0 )
+		# if ( (y[ l , "divisor" ] != 1) & !(y[ l , "char" ]) & no_decimal_points ) SASfile[ , l ] <- SASfile[ , l ] * as.numeric( y[ l , "divisor" ] )
 		
-		if ( (y[ l , "divisor" ] != 1) & !(y[ l , "char" ]) & no_decimal_points ) SASfile[ , l ] <- SASfile[ , l ] * as.numeric( y[ l , "divisor" ] )
+		# the above code does not work.  if the column says it has a divisor but already has decimal points, 
+		# the column will be divided some more.  if this is the case, the SAS input script is probably just wrong.
+		
+		if ( (y[ l , "divisor" ] != 1) & !(y[ l , "char" ]) ) SASfile[ , l ] <- SASfile[ , l ] * as.numeric( y[ l , "divisor" ] )
 		
 	}
 
