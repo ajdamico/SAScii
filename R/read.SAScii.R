@@ -175,7 +175,9 @@ function( fn , sas_ri , beginline = 1 , buffersize = 50 , zipped = F , n = -1 , 
 			# then skip this block of code entirely
 		
 		}
-		
+	
+		cat( "  current progress: " , l , "of" , nrow( y ) , "columns processed." , "\r" )
+	
 	}
 
 	SASfile
