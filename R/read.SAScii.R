@@ -12,7 +12,7 @@ withWarnings <- function(expr) {
 
 
 read.SAScii <- 
-function( fn , sas_ri , beginline = 1 , buffersize = 50 , zipped = F , n = -1 , intervals.to.print = 1000 , lrecl = NULL){
+function( fn , sas_ri , beginline = 1 , buffersize = 50 , zipped = F , n = -1 , intervals.to.print = 1000 , lrecl = NULL , skip.decimal.division = NULL ){
 #read.SAScii uses a smaller buffersize than the usual FWF default, to handle larger datasets
 
 	x <- parse.SAScii( sas_ri , beginline , lrecl )
@@ -133,13 +133,48 @@ function( fn , sas_ri , beginline = 1 , buffersize = 50 , zipped = F , n = -1 , 
 			}
 		}
 	
-		#are there any periods in the column already?
-		# if ( (y[ l , "divisor" ] != 1) & !(y[ l , "char" ]) & no_decimal_points ) SASfile[ , l ] <- SASfile[ , l ] * as.numeric( y[ l , "divisor" ] )
+	
+		# if the user doesn't specify whether or not to skip dividing by the decimal places..
+		# then try to figure out whether a numeric column with decimal places indicated by the SAS script
+		# has or has not already been divided to hit the appropriate number of decimal places.
+		if ( is.null( skip.decimal.division ) ){
 		
-		# the above code does not work.  if the column says it has a divisor but already has decimal points, 
-		# the column will be divided some more.  if this is the case, the SAS input script is probably just wrong.
+			# scientific notation contains a decimal point when converted to a character string..
+			# so store the user's current value and get rid of it.
+			user.defined.scipen <- getOption( 'scipen' )
+			
+			# set scientific notation to something impossibly high.  Inf doesn't work.
+			options( scipen = 1000000 )
+			
+			# run a logical test on the column to see if it ever contains the symbol "." 
+				# don't just look in the first record.  look at them all.
+			no_decimal_points <- ( sum( grepl( "." , SASfile[ , l ] , fixed = T ) ) == 0 )
+	
+			# does it have a divisor?
+			# is it numeric (not char)
+			# are there no decimal points in the column already?
+			# ..then divide it
+			if ( ( y[ l , "divisor" ] != 1 ) & !( y[ l , "char" ] ) & no_decimal_points ) SASfile[ , l ] <- SASfile[ , l ] * as.numeric( y[ l , "divisor" ] )
 		
-		if ( (y[ l , "divisor" ] != 1) & !(y[ l , "char" ]) ) SASfile[ , l ] <- SASfile[ , l ] * as.numeric( y[ l , "divisor" ] )
+			# return the scientific notation to wherever it was before this began
+			options( scipen = user.defined.scipen )
+		
+		} else {
+		
+			# if the user specifies to perform decimal division..
+			if ( !skip.decimal.division ){
+				
+				# then (regardless of already containing periods - see block above) perform the division
+				if ( (y[ l , "divisor" ] != 1) & !(y[ l , "char" ]) ) SASfile[ , l ] <- SASfile[ , l ] * as.numeric( y[ l , "divisor" ] )
+	
+			} 
+			
+			# otherwise.. if skip.decimal.division == FALSE
+			# if the user indicates not wanting numeric values divided
+			# to hit the decimal places specified by the input file,
+			# then skip this block of code entirely
+		
+		}
 		
 	}
 
