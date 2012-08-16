@@ -75,7 +75,7 @@ function( fn , sas_ri , beginline = 1 , buffersize = 50 , zipped = F , n = -1 , 
 		
 		i <- i + 1
 			
-		cat( "  current progress: read.fwf has read in" , prettyNum( nrow( SASfile ) , big.mark = "," ) , "records" , "\r" )
+		cat( "  current progress: read.fwf has read in" , prettyNum( nrow( SASfile ) , big.mark = "," ) , "records                    " , "\r" )
 
 	}
 	
@@ -176,7 +176,7 @@ function( fn , sas_ri , beginline = 1 , buffersize = 50 , zipped = F , n = -1 , 
 		
 		}
 	
-		cat( "  current progress: " , l , "of" , nrow( y ) , "columns processed." , "\r" )
+		cat( "  current progress: " , l , "of" , nrow( y ) , "columns processed.                    " , "\r" )
 	
 	}
 
