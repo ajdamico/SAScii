@@ -21,7 +21,7 @@ function( sas_ri , beginline = 1 , lrecl = NULL ){
 	#find the first line with the word INPUT in it, which is where the ASCII variable locations occur.
 
 	#lines that start with input
-	firstline <- grep("INPUT",SASinput)
+	firstline <- grep("INPUT",SASinput)[1]
 
 	#find the first semicolon ending that input line
 	a<-grep(";",toupper(SASinput))
