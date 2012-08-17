@@ -1,5 +1,6 @@
 \name{read.SAScii}
 \alias{read.SAScii}
+\alias{withWarnings}
 \title{
 Create an R data frame by reading in an ASCII file and SAS import instructions
 }
