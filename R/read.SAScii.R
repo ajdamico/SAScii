@@ -10,6 +10,10 @@ withWarnings <- function(expr) {
      withCallingHandlers(expr, warning = wHandler)
 } 
 
+SAScii_fork <- function(){
+	return(TRUE)
+}
+
 
 read.SAScii <- 
 function( fn , sas_ri , beginline = 1 , buffersize = 50 , zipped = F , n = -1 , intervals.to.print = 1000 , lrecl = NULL , skip.decimal.division = NULL ){

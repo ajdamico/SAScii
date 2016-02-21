@@ -1,2 +1,3 @@
 export(parse.SAScii)
 export(read.SAScii)
+export(SAScii_fork)
