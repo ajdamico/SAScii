@@ -10,7 +10,7 @@ function( sas_ri , beginline = 1 , lrecl = NULL ){
 	##if the SAS code includes more than one INPUT, start at the user-specified beginline
 	SASinput <- SASinput[ beginline:length(SASinput) ]
 	
-	SASinput <- toupper( SASinput )
+	SASinput <- toupper( stringr::str_trim(SASinput) )
 
 	#remote all /* and */ from the code
 	SASinput <- SAS.uncomment( SASinput , "/*" , "*/" )
