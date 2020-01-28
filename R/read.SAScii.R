@@ -182,4 +182,3 @@ function( fn , sas_ri , beginline = 1 , buffersize = 50 , zipped = F , n = -1 , 
 
 	SASfile
 }
-

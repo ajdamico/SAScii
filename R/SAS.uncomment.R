@@ -1,9 +1,14 @@
 SAS.uncomment <- 
-function( SASinput , starting.comment , ending.comment ){
+function( SASinput , starting.comment , ending.comment, encoding=NULL ){
 
 	#remove /* */
 	for ( i in 1:length(SASinput) ){
 		
+        # coerce the line to the desired encoding if one is provided
+        if (!is.null(encoding)) {
+            Encoding(SASinput[i]) <- encoding
+        }
+                
 		#test if the line contains a slash_asterisk (or any opening comment character)
 		slash_asterisk <- unlist( gregexpr( starting.comment , SASinput[ i ] , fixed = T ) )
 		
@@ -47,4 +52,3 @@ function( SASinput , starting.comment , ending.comment ){
 
 	SASinput
 }
-
