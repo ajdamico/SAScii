@@ -265,12 +265,8 @@ function( sas_ri , beginline = 1 , lrecl = NULL ){
 		}
 		
 		#the width should be the end position minus the beginning position, plus one
-		x <- 
-			transform(
-				x ,
-				width = as.numeric(end) - as.numeric(start) + 1 
-			)
-		
+		x[ , 'width' ] <- as.numeric( x[ , 'end' ] ) - as.numeric( x[ , 'start' ] ) + 1
+
 		#if there's no variable name, it should be a negative.
 		x[ is.na( x[ , 'varname' ] ) , 'width' ] <- ( -1 * x[ is.na( x[ , 'varname' ] ) , 'width' ] )
 		

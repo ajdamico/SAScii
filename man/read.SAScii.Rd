@@ -8,7 +8,16 @@ Create an R data frame by reading in an ASCII file and SAS import instructions
 Using importation code designed for SAS users to read ASCII files into sas7bdat files, the read.SAScii function parses through the INPUT block of a (.sas) syntax file to design the parameters needed for a read.fwf function call, and then runs that command.  This allows the user to specify the location of the ASCII (often a .dat) file and the location of the .sas syntax file, and then load the data frame directly into R in just one step.
 }
 \usage{
-read.SAScii( fn, sas_ri, beginline = 1, buffersize = 50, zipped = F , n = -1 , intervals.to.print = 1000 , lrecl = NULL , skip.decimal.division = NULL )
+read.SAScii( fn, 
+	sas_ri, 
+	beginline = 1, 
+	buffersize = 50, 
+	zipped = F , 
+	n = -1 , 
+	intervals.to.print = 1000 , 
+	lrecl = NULL , 
+	skip.decimal.division = NULL 
+)
 }
 \arguments{
   \item{fn}{
@@ -371,7 +380,12 @@ SIPP.04w1.sas <- parse.SAScii( SIPP.04w1.SAS.read.in.instructions , beginline = 
 for ( i in 1:12 ){
 	
 	SIPP.04wX.file.location <- 
-		paste( "http://smpbff2.dsd.census.gov/pub/sipp/2004/l04puw" , i , ".zip" , sep = "" )
+		paste( 
+			"http://smpbff2.dsd.census.gov/pub/sipp/2004/l04puw" , 
+			i , 
+			".zip" , 
+			sep = "" 
+		)
 
 	#name the data frame based on the current wave
 	df.name <- paste( "SIPP.04w" , i , ".df" , sep = "" )

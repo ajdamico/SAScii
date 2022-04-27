@@ -1,0 +1,3 @@
+importFrom("utils", "capture.output", "download.file", "read.fwf", "unzip")
+export(parse.SAScii)
+export(read.SAScii)
