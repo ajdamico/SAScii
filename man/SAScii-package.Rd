@@ -8,16 +8,6 @@ Import ASCII files directly into R using only a SAS input script
 \description{
 Using importation code designed for SAS users to read ASCII files into sas7bdat files, the SAScii package parses through the INPUT block of a (.sas) syntax file to design the parameters needed for a read.fwf() function call.  This allows the user to specify the location of the ASCII (often a .dat) file and the location of the .sas syntax file, and then load the data frame directly into R in just one step.
 }
-\details{
-\tabular{ll}{
-Package: \tab SAScii\cr
-Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2012-08-18\cr
-License: \tab GPL (>= 2)\cr
-LazyLoad: \tab Yes\cr
-}
-}
 \author{
 Anthony Joseph Damico
 
